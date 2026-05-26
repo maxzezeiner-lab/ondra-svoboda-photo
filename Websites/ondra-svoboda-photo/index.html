@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ondřej Svoboda — Fotograf · Praha</title>
+  <meta name="description" content="Ondřej Svoboda – profesionální fotograf z Prahy. Portréty, fashion a lifestyle fotografie. Rezervujte si focení.">
+  <meta name="keywords" content="fotograf Praha, portrétní fotografie, fashion fotografie, lifestyle, Ondřej Svoboda">
+  <meta property="og:title" content="Ondřej Svoboda — Fotograf · Praha">
+  <meta property="og:description" content="Portréty · Fashion · Street · Lifestyle">
+  <meta property="og:image" content="images/hero.jpg">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════
+       NAVIGATION
+  ══════════════════════════════════════════════════════ -->
+  <nav class="navbar" aria-label="Hlavní navigace">
+    <a href="index.html" class="nav-logo">
+      <img src="images/logo.png" alt="Ondřej Svoboda" class="nav-logo-img" id="navLogoImg">
+      <span class="nav-logo-text">Ondřej Svoboda</span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="#galerie">Galerie</a></li>
+      <li><a href="cenik.html">Ceník</a></li>
+      <li><a href="ohlasy.html">Ohlasy</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+    </ul>
+    <button class="hamburger" aria-label="Otevřít menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile nav overlay -->
+  <nav class="nav-mobile" aria-label="Mobilní navigace">
+    <a href="#galerie">Galerie</a>
+    <a href="cenik.html">Ceník</a>
+    <a href="ohlasy.html">Ohlasy</a>
+    <a href="#kontakt">Kontakt</a>
+  </nav>
+
+  <main>
+
+    <!-- ══════════════════════════════════════════════════
+         HERO
+    ══════════════════════════════════════════════════ -->
+    <section class="hero" aria-label="Úvodní sekce">
+      <div class="hero-slideshow" role="img" aria-label="Hero fotogalerie"></div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="hero-content">
+        <p class="hero-label">Praha · 2026</p>
+        <h1 class="hero-title">Ondřej Svoboda</h1>
+        <p class="hero-sub">Fotograf · Praha</p>
+        <p class="hero-tagline">Portréty · Fashion · Lifestyle</p>
+        <div class="hero-ctas">
+          <a href="#galerie" class="btn btn-outline">Zobrazit galerii</a>
+          <a href="#kontakt" class="btn btn-gold">Rezervovat focení</a>
+        </div>
+      </div>
+      <div class="hero-scroll" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 5v14M5 12l7 7 7-7"/>
+        </svg>
+        <span>Scroll</span>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         ABOUT
+    ══════════════════════════════════════════════════ -->
+    <section class="section" id="o-mne" aria-labelledby="about-heading">
+      <div class="container">
+        <div class="about-grid">
+
+          <div class="about-text">
+            <p class="section-label fade-in">O mně</p>
+            <h2 class="section-heading fade-in fade-in-delay-1" id="about-heading">Za objektivem</h2>
+            <div class="divider fade-in fade-in-delay-2" aria-hidden="true"></div>
+            <p class="fade-in fade-in-delay-2">
+              Jsem Ondřej Svoboda, fotograf z Prahy specializující se na portrétní, fashion a lifestyle fotografii. Věřím, že každý člověk má svůj jedinečný příběh — a já ho zachytím.
+            </p>
+            <p class="fade-in fade-in-delay-3">
+              Pracuji s přirozeným světlem i studiovým osvětlením a dbám na to, aby se každý klient cítil během focení pohodlně a přirozeně.
+            </p>
+            <div class="social-links fade-in fade-in-delay-4">
+              <a href="https://instagram.com/ondra_svoboda_photo" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram Ondřej Svoboda">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <rect x="2" y="2" width="20" height="20" rx="5"/>
+                  <circle cx="12" cy="12" r="5"/>
+                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+                </svg>
+                @ondra_svoboda_photo
+              </a>
+              <a href="https://threads.net/@ondra_svobodaa" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Threads Ondřej Svoboda">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.473 12.01v-.017c.027-3.579.879-6.43 2.525-8.482C5.845 1.207 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.594 12c.022 3.08.711 5.478 2.05 7.154 1.433 1.779 3.631 2.691 6.532 2.712 2.652-.021 4.523-.66 5.819-1.952 1.254-1.253 1.92-3.02 1.978-5.244l.006-.138h-7.657v-2.05h9.703v.15c-.055 3.085-.898 5.437-2.497 6.994-1.556 1.515-3.788 2.284-6.342 2.373l-.001.001z"/>
+                </svg>
+                @ondra_svobodaa
+              </a>
+            </div>
+          </div>
+
+          <div class="about-image fade-in fade-in-delay-3" id="aboutImageWrap">
+            <img
+              src="images/about.jpg"
+              alt="Ondřej Svoboda — fotograf"
+              loading="lazy"
+              width="600"
+              height="800"
+              id="aboutImg"
+            >
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         GALLERY
+    ══════════════════════════════════════════════════ -->
+    <section class="section gallery-section" id="galerie" aria-labelledby="gallery-heading">
+      <div class="container">
+        <p class="section-label fade-in">Portfolio</p>
+        <h2 class="section-heading fade-in fade-in-delay-1" id="gallery-heading">Galerie</h2>
+        <div class="divider fade-in fade-in-delay-2" aria-hidden="true"></div>
+
+        <!-- Filter -->
+        <div class="gallery-filters fade-in fade-in-delay-2" role="group" aria-label="Filtr kategorií">
+          <button class="filter-btn active" data-filter="all">Vše</button>
+          <button class="filter-btn" data-filter="portrait">Portréty</button>
+          <button class="filter-btn" data-filter="fashion">Fashion</button>
+          <button class="filter-btn" data-filter="lifestyle">Lifestyle</button>
+        </div>
+
+        <!-- Grid -->
+        <div class="gallery-grid" role="list" aria-label="Fotogalerie">
+
+          <!-- Portréty -->
+          <article class="gallery-item" data-category="portrait" role="listitem">
+            <img src="images/gallery/portrait/portrait_01.jpg" alt="Portrét 1" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Portrét</span></div>
+          </article>
+          <article class="gallery-item" data-category="portrait" role="listitem">
+            <img src="images/gallery/portrait/portrait_02.jpg" alt="Portrét 2" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Portrét</span></div>
+          </article>
+          <article class="gallery-item" data-category="portrait" role="listitem">
+            <img src="images/gallery/portrait/portrait_03.jpg" alt="Portrét 3" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Portrét</span></div>
+          </article>
+          <article class="gallery-item" data-category="portrait" role="listitem">
+            <img src="images/gallery/portrait/portrait_04.jpg" alt="Portrét 4" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Portrét</span></div>
+          </article>
+          <article class="gallery-item" data-category="portrait" role="listitem">
+            <img src="images/gallery/portrait/portrait_05.jpg" alt="Portrét 5" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Portrét</span></div>
+          </article>
+          <article class="gallery-item" data-category="portrait" role="listitem">
+            <img src="images/gallery/portrait/portrait_06.jpg" alt="Portrét 6" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Portrét</span></div>
+          </article>
+
+          <!-- Fashion -->
+          <article class="gallery-item" data-category="fashion" role="listitem">
+            <img src="images/gallery/fashion/fashion_01.jpg" alt="Fashion 1" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Fashion</span></div>
+          </article>
+          <article class="gallery-item" data-category="fashion" role="listitem">
+            <img src="images/gallery/fashion/fashion_02.jpg" alt="Fashion 2" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Fashion</span></div>
+          </article>
+          <article class="gallery-item" data-category="fashion" role="listitem">
+            <img src="images/gallery/fashion/fashion_03.jpg" alt="Fashion 3" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Fashion</span></div>
+          </article>
+          <article class="gallery-item" data-category="fashion" role="listitem">
+            <img src="images/gallery/fashion/fashion_04.jpg" alt="Fashion 4" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Fashion</span></div>
+          </article>
+
+          <!-- Lifestyle -->
+          <article class="gallery-item" data-category="lifestyle" role="listitem">
+            <img src="images/gallery/lifestyle/lifestyle_01.jpg" alt="Lifestyle 1" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Lifestyle</span></div>
+          </article>
+          <article class="gallery-item" data-category="lifestyle" role="listitem">
+            <img src="images/gallery/lifestyle/lifestyle_02.jpg" alt="Lifestyle 2" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Lifestyle</span></div>
+          </article>
+          <article class="gallery-item" data-category="lifestyle" role="listitem">
+            <img src="images/gallery/lifestyle/lifestyle_03.jpg" alt="Lifestyle 3" loading="lazy">
+            <div class="gallery-item-overlay" aria-hidden="true"><span>Lifestyle</span></div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         TESTIMONIALS PREVIEW
+    ══════════════════════════════════════════════════ -->
+    <section class="section testimonials-section" id="ohlasy-preview" aria-labelledby="testimonials-heading">
+      <div class="container">
+        <p class="section-label fade-in">Spokojení klienti</p>
+        <h2 class="section-heading fade-in fade-in-delay-1" id="testimonials-heading">Ohlasy</h2>
+        <div class="divider fade-in fade-in-delay-2" aria-hidden="true"></div>
+
+        <div class="testimonials-grid">
+
+          <article class="testimonial-card fade-in fade-in-delay-2">
+            <p class="testimonial-text">Focení s tebou bylo geniální!! Atmosféra, přístup — úžasný!! Fotky jsou nádherné! Mocmoc doporučuji všem!</p>
+            <p class="testimonial-author">— Klientka</p>
+          </article>
+
+          <article class="testimonial-card fade-in fade-in-delay-3">
+            <p class="testimonial-text">Velmi talentovaný mladý fotograf. Focení bylo velmi příjemné, zábavné a vedeli sme sa dohodnúť na štýle fotenia. Odporúčam!</p>
+            <p class="testimonial-author">— Klient</p>
+          </article>
+
+          <article class="testimonial-card fade-in fade-in-delay-4">
+            <p class="testimonial-text">Focení jako takové se mi hrozně líbilo, bylo to napohodu, rychle, nápady byly skvělé, fotky jsou krásné, přirozené.</p>
+            <p class="testimonial-author">— Klientka</p>
+          </article>
+
+        </div>
+
+        <div class="testimonials-more fade-in fade-in-delay-3">
+          <a href="ohlasy.html" class="link-arrow">
+            Zobrazit všechny ohlasy
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         CONTACT
+    ══════════════════════════════════════════════════ -->
+    <section class="section contact-section" id="kontakt" aria-labelledby="contact-heading">
+      <div class="container">
+        <div class="contact-inner">
+          <p class="section-label fade-in">Kontakt</p>
+          <h2 class="section-heading fade-in fade-in-delay-1" id="contact-heading">Rezervujte si focení</h2>
+          <div class="divider fade-in fade-in-delay-2" aria-hidden="true"></div>
+          <p class="fade-in fade-in-delay-2">
+            Napište mi do DM na Instagramu nebo na email — rád se domluvíme na termínu a stylu focení.
+          </p>
+          <div class="contact-buttons fade-in fade-in-delay-3">
+            <a
+              href="https://instagram.com/ondra_svoboda_photo"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-gold"
+              aria-label="Napsat na Instagram"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5"/>
+                <circle cx="12" cy="12" r="5"/>
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+              </svg>
+              Instagram DM
+            </a>
+            <a
+              href="mailto:<!-- doplňte email -->"
+              class="btn btn-outline"
+              aria-label="Napsat email"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              Email
+            </a>
+          </div>
+          <p class="contact-note fade-in fade-in-delay-4">Obvykle odpovídám do 24 hodin.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════ -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-inner">
+        <p class="footer-copy">© 2026 Ondřej Svoboda · ondra_svoboda_photo</p>
+        <nav class="footer-links" aria-label="Patička navigace">
+          <a href="#galerie">Galerie</a>
+          <a href="cenik.html">Ceník</a>
+          <a href="ohlasy.html">Ohlasy</a>
+          <a href="privacy.html">Ochrana osobních údajů</a>
+        </nav>
+        <div class="footer-social">
+          <a
+            href="https://instagram.com/ondra_svoboda_photo"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram @ondra_svoboda_photo"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <circle cx="12" cy="12" r="5"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+            @ondra_svoboda_photo
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Cookies banner -->
+  <div class="cookie-banner" role="alert" aria-live="polite">
+    <p class="cookie-text">
+      Tento web používá localStorage pro zapamatování vašeho souhlasu.
+      Více informací v <a href="privacy.html">Ochraně osobních údajů</a>.
+    </p>
+    <button class="cookie-accept">Rozumím</button>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
