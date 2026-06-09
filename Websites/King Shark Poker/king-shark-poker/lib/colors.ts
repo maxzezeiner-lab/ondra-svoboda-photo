@@ -1,14 +1,13 @@
+// Image-backed felt colours — each has a matching PNG in /public/layers/tables/poker/oval/
+// File naming: "Felt {name}.png" and "Felt {name} pit.png"
 export const FELT_COLORS = [
-  { id: "emerald", name: "Emerald Green", hex: "#1a6b3c" },
-  { id: "royal-blue", name: "Royal Blue", hex: "#1a3a8f" },
-  { id: "burgundy", name: "Burgundy", hex: "#722f37" },
-  { id: "black", name: "Black", hex: "#0a0a0a" },
-  { id: "charcoal", name: "Charcoal", hex: "#36454f" },
-  { id: "red", name: "Casino Red", hex: "#c0392b" },
-  { id: "purple", name: "Royal Purple", hex: "#5b2d8e" },
-  { id: "navy", name: "Navy", hex: "#0d1b4b" },
-  { id: "beige", name: "Beige", hex: "#d2b48c" },
-  { id: "gold", name: "Gold", hex: "#d4af37" },
+  { id: "black",  name: "Black",  hex: "#0a0a0a" },
+  { id: "blue",   name: "Blue",   hex: "#1a3a8f" },
+  { id: "brown",  name: "Brown",  hex: "#6b3a2a" },
+  { id: "green",  name: "Green",  hex: "#1a6b3c" },
+  { id: "orange", name: "Orange", hex: "#e67e22" },
+  { id: "purple", name: "Purple", hex: "#5b2d8e" },
+  { id: "red",    name: "Red",    hex: "#c0392b" },
 ];
 
 export const VINYL_STANDARD = [

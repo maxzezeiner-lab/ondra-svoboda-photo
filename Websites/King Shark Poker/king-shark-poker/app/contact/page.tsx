@@ -16,6 +16,8 @@ const EMPTY: ContactForm = { name: "", email: "", phone: "", subject: "", messag
 
 export default function ContactPage() {
   const [form, setForm] = useState<ContactForm>(EMPTY);
+  const [gdprConsent, setGdprConsent] = useState(false);
+  const [gdprError, setGdprError] = useState(false);
   const [errors, setErrors] = useState<Partial<ContactForm>>({});
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
@@ -34,7 +36,9 @@ export default function ContactPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs = validate();
-    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    const noConsent = !gdprConsent;
+    if (noConsent) setGdprError(true);
+    if (Object.keys(errs).length > 0 || noConsent) { setErrors(errs); return; }
     setSending(true);
     // Contact form submissions also save to Excel for tracking
     await fetch("/api/submit", {
@@ -121,7 +125,7 @@ export default function ContactPage() {
                 <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>✓</div>
                 <h3 style={{ fontFamily: "var(--font-playfair, Georgia, serif)", fontSize: "1.5rem", color: "var(--gold)", marginBottom: "0.75rem" }}>Message Received!</h3>
                 <p style={{ color: "#888", lineHeight: 1.7, marginBottom: "1.5rem" }}>Thank you for reaching out. We&apos;ll get back to you within 1–2 business days.</p>
-                <button className="btn-outline-gold" onClick={() => { setSubmitted(false); setForm(EMPTY); }}>Send Another Message</button>
+                <button className="btn-outline-gold" onClick={() => { setSubmitted(false); setForm(EMPTY); setGdprConsent(false); setGdprError(false); }}>Send Another Message</button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} noValidate>
@@ -168,6 +172,30 @@ export default function ContactPage() {
                     placeholder="Describe your project, requirements, or ask any questions..."
                   />
                   {errors.message && <p style={{ fontSize: "0.75rem", color: "#c0392b", marginTop: "0.25rem" }}>{errors.message}</p>}
+                </div>
+
+                {/* GDPR consent */}
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={gdprConsent}
+                      onChange={(e) => { setGdprConsent(e.target.checked); if (e.target.checked) setGdprError(false); }}
+                      style={{ marginTop: "3px", accentColor: "var(--gold)", width: "16px", height: "16px", flexShrink: 0, cursor: "pointer" }}
+                    />
+                    <span style={{ fontSize: "0.82rem", color: "#888", lineHeight: 1.6 }}>
+                      I agree to the processing of my personal data in accordance with the{" "}
+                      <Link href="/privacy-policy" style={{ color: "var(--gold)", textDecoration: "underline", textUnderlineOffset: "2px" }}>
+                        Privacy Policy
+                      </Link>
+                      . *
+                    </span>
+                  </label>
+                  {gdprError && (
+                    <p style={{ fontSize: "0.75rem", color: "#c0392b", marginTop: "0.4rem", paddingLeft: "1.75rem" }}>
+                      Please accept the Privacy Policy to continue.
+                    </p>
+                  )}
                 </div>
 
                 <button type="submit" className="btn-gold" style={{ width: "100%" }} disabled={sending}>

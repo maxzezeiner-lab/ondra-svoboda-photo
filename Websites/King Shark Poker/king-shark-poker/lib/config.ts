@@ -34,14 +34,13 @@ export const PRICES = {
       E: 600,
     },
     felt: {
-      standard: 0,
       customHex: 80,
-      ownDesign: 200,
     },
-    matDesign: {
-      plain: 0,
-      simpleLine: 100,
-      premiumBorder: 250,
+    feltDesign: {
+      A: 0,
+      B: 100,
+      C: 250,
+      D: 350,
       custom: 400,
     },
     vinyl: {

@@ -4,11 +4,11 @@ export interface TableConfig {
   shape: "oval" | "bean" | "round";
   pit: boolean;
   legs: "A" | "B" | "C" | "D" | "E";
+  feltMode: "color" | "design";
   feltColorId: string;
   feltCustomHex: string;
-  feltOwnDesign: boolean;
-  feltOwnDesignFile: string;
-  matDesign: "plain" | "simpleLine" | "premiumBorder" | "custom";
+  feltDesign: "A" | "B" | "C" | "D" | "custom";
+  feltDesignFile: string;
   uploadedLogoName: string;
   vinylType: "standard" | "premium" | "custom";
   vinylColorId: string;

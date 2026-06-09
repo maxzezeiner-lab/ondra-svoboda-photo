@@ -15,11 +15,11 @@ const DEFAULT_CONFIG: TableConfig = {
   shape: "oval",
   pit: false,
   legs: "A",
-  feltColorId: "emerald",
+  feltMode: "color",
+  feltColorId: "black",
   feltCustomHex: "",
-  feltOwnDesign: false,
-  feltOwnDesignFile: "",
-  matDesign: "plain",
+  feltDesign: "A",
+  feltDesignFile: "",
   uploadedLogoName: "",
   vinylType: "standard",
   vinylColorId: "black",
@@ -56,8 +56,11 @@ function calcPrice(cfg: TableConfig): number {
   t += P.shape[cfg.shape];
   if (cfg.pit) t += P.pit.yes;
   t += P.legs[cfg.legs];
-  t += cfg.feltOwnDesign ? P.felt.ownDesign : cfg.feltColorId === "custom" ? P.felt.customHex : 0;
-  t += P.matDesign[cfg.matDesign];
+  if (cfg.feltMode === "color") {
+    if (cfg.feltColorId === "custom") t += P.felt.customHex;
+  } else {
+    t += P.feltDesign[cfg.feltDesign];
+  }
   t += cfg.vinylType === "custom" ? P.vinyl.customHex : cfg.vinylType === "premium" ? P.vinyl.premium : 0;
   if (cfg.chipRack) t += P.chipRack.yes;
   if (cfg.cupHolderCount > 0) {
@@ -82,10 +85,12 @@ function buildRows(cfg: TableConfig) {
   if (cfg.shape === "round")  rows.push({ label: "Shape: Round",  value: P.shape.round });
   if (cfg.pit)                rows.push({ label: "Raised Armrest Pit", value: P.pit.yes });
   if (cfg.legs !== "A")       rows.push({ label: `Leg Set: Variant ${cfg.legs}`, value: P.legs[cfg.legs] });
-  if (cfg.feltOwnDesign)      rows.push({ label: "Felt: Own Design", value: P.felt.ownDesign });
-  else if (cfg.feltColorId === "custom") rows.push({ label: "Felt: Custom HEX", value: P.felt.customHex });
-  const mat = P.matDesign[cfg.matDesign];
-  if (mat > 0) rows.push({ label: `Mat Design: ${cfg.matDesign}`, value: mat });
+  if (cfg.feltMode === "color" && cfg.feltColorId === "custom")
+    rows.push({ label: "Felt: Custom Colour", value: P.felt.customHex });
+  if (cfg.feltMode === "design") {
+    const dp = P.feltDesign[cfg.feltDesign];
+    if (dp > 0) rows.push({ label: `Felt Design ${cfg.feltDesign}`, value: dp });
+  }
   if (cfg.vinylType === "custom")  rows.push({ label: "Vinyl: Custom HEX", value: P.vinyl.customHex });
   else if (cfg.vinylType === "premium") rows.push({ label: "Vinyl: Premium", value: P.vinyl.premium });
   if (cfg.chipRack) rows.push({ label: "Chip Rack", value: P.chipRack.yes });
@@ -157,11 +162,11 @@ export default function TablesPage() {
   const setShape         = (v: TableConfig["shape"])          => setCfg(p => ({ ...p, shape: v }));
   const setPit           = (v: boolean)                       => setCfg(p => ({ ...p, pit: v }));
   const setLegs          = (v: TableConfig["legs"])           => setCfg(p => ({ ...p, legs: v }));
-  const setFeltColor     = (v: string)                        => setCfg(p => ({ ...p, feltColorId: v }));
-  const setFeltHex       = (v: string)                        => setCfg(p => ({ ...p, feltCustomHex: v }));
-  const setFeltOwnDesign = (v: boolean)                       => setCfg(p => ({ ...p, feltOwnDesign: v }));
-  const setFeltOwnFile   = (v: string)                        => setCfg(p => ({ ...p, feltOwnDesignFile: v }));
-  const setMatDesign     = (v: TableConfig["matDesign"])      => setCfg(p => ({ ...p, matDesign: v }));
+  const setFeltMode      = (v: TableConfig["feltMode"])    => setCfg(p => ({ ...p, feltMode: v }));
+  const setFeltColor     = (v: string)                     => setCfg(p => ({ ...p, feltColorId: v }));
+  const setFeltHex       = (v: string)                     => setCfg(p => ({ ...p, feltCustomHex: v }));
+  const setFeltDesign    = (v: TableConfig["feltDesign"])  => setCfg(p => ({ ...p, feltDesign: v }));
+  const setFeltDesignFile= (v: string)                     => setCfg(p => ({ ...p, feltDesignFile: v }));
   const setLogoName      = (v: string)                        => setCfg(p => ({ ...p, uploadedLogoName: v }));
   const setVinylType     = (v: TableConfig["vinylType"])      => setCfg(p => ({ ...p, vinylType: v }));
   const setVinylColor    = (v: string)                        => setCfg(p => ({ ...p, vinylColorId: v }));
@@ -246,14 +251,14 @@ export default function TablesPage() {
   }
 
   // ── Step 1: Full configurator ────────────────────────────────────────────
-  const feltName = FELT_COLORS.find(c => c.id === cfg.feltColorId)?.name ?? cfg.feltColorId;
-  const subLabel = `${cfg.size} · ${cfg.shape} · ${cfg.feltOwnDesign ? "own design" : feltName} felt`;
+  const feltLabel = cfg.feltMode === "design"
+    ? `Design ${cfg.feltDesign}`
+    : (FELT_COLORS.find(c => c.id === cfg.feltColorId)?.name ?? cfg.feltColorId);
+  const subLabel = `${cfg.size} · ${cfg.shape} · ${feltLabel} felt`;
 
-  const feltHex = cfg.feltOwnDesign
-    ? "#1a6b3c"
-    : cfg.feltColorId === "custom"
-      ? cfg.feltCustomHex || "#1a6b3c"
-      : FELT_COLORS.find(c => c.id === cfg.feltColorId)?.hex ?? "#1a6b3c";
+  const feltHex = cfg.feltColorId === "custom"
+    ? cfg.feltCustomHex || "#0a0a0a"
+    : FELT_COLORS.find(c => c.id === cfg.feltColorId)?.hex ?? "#0a0a0a";
 
   const vinylHex = cfg.vinylType === "custom"
     ? cfg.vinylCustomHex || "#0a0a0a"
@@ -314,31 +319,47 @@ export default function TablesPage() {
             </div>
           </Section>
 
-          <Section title="Felt & Mat">
-            {!cfg.feltOwnDesign && (
-              <ColorPicker label="" colors={FELT_COLORS} selected={cfg.feltColorId} onChange={setFeltColor} showCustomHex customHex={cfg.feltCustomHex} onCustomHexChange={setFeltHex} />
-            )}
-            <label style={{ display: "flex", alignItems: "center", gap: "0.625rem", fontSize: "0.85rem", color: "#aaa", cursor: "pointer", marginBottom: "0.625rem" }}>
-              <input type="checkbox" checked={cfg.feltOwnDesign} onChange={e => setFeltOwnDesign(e.target.checked)} style={{ accentColor: "#C9A84C", width: "16px", height: "16px" }} />
-              Own Design Upload (+{PRICES.table.felt.ownDesign}€)
-            </label>
-            {cfg.feltOwnDesign && (
-              <div style={{ marginBottom: "0.625rem" }}>
-                <input type="file" accept="image/*,.pdf,.ai,.eps" onChange={e => setFeltOwnFile(e.target.files?.[0]?.name ?? "")} style={{ fontSize: "0.82rem", color: "#888", background: "#111", border: "1px solid #2a2a2a", borderRadius: "6px", padding: "0.5rem", width: "100%" }} />
-                {cfg.feltOwnDesignFile && <p style={{ fontSize: "0.75rem", color: "#C9A84C", marginTop: "0.375rem" }}>Selected: {cfg.feltOwnDesignFile}</p>}
+          <Section title="Felt">
+            {/* Mode toggle */}
+            <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
+              <button type="button" onClick={() => setFeltMode("color")} style={{ flex: 1, padding: "0.5rem", borderRadius: "6px", border: cfg.feltMode === "color" ? "1px solid #C9A84C" : "1px solid #2a2a2a", background: cfg.feltMode === "color" ? "rgba(201,168,76,0.15)" : "#111", color: cfg.feltMode === "color" ? "#C9A84C" : "#888", cursor: "pointer", fontSize: "0.82rem", fontWeight: cfg.feltMode === "color" ? 700 : 400 }}>
+                Colour
+              </button>
+              <button type="button" onClick={() => setFeltMode("design")} style={{ flex: 1, padding: "0.5rem", borderRadius: "6px", border: cfg.feltMode === "design" ? "1px solid #C9A84C" : "1px solid #2a2a2a", background: cfg.feltMode === "design" ? "rgba(201,168,76,0.15)" : "#111", color: cfg.feltMode === "design" ? "#C9A84C" : "#888", cursor: "pointer", fontSize: "0.82rem", fontWeight: cfg.feltMode === "design" ? 700 : 400 }}>
+                Design
+              </button>
+            </div>
+
+            {/* Colour mode */}
+            {cfg.feltMode === "color" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                {FELT_COLORS.map(c => (
+                  <Opt key={c.id} label={c.name} active={cfg.feltColorId === c.id} onClick={() => setFeltColor(c.id)} />
+                ))}
+                <Opt label="Custom Colour" active={cfg.feltColorId === "custom"} price={PRICES.table.felt.customHex} onClick={() => setFeltColor("custom")} />
+                {cfg.feltColorId === "custom" && (
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.25rem" }}>
+                    <input type="color" value={cfg.feltCustomHex || "#0a0a0a"} onChange={e => setFeltHex(e.target.value)} style={{ width: "40px", height: "32px", borderRadius: "4px", border: "1px solid #2a2a2a", cursor: "pointer", background: "none", padding: "2px" }} />
+                    <input type="text" className="input-dark" placeholder="#0a0a0a" value={cfg.feltCustomHex} onChange={e => setFeltHex(e.target.value)} style={{ maxWidth: "140px" }} />
+                  </div>
+                )}
               </div>
             )}
-            <SubLabel>Inside Mat Design</SubLabel>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-              <Opt label="Plain"                 active={cfg.matDesign === "plain"}         onClick={() => setMatDesign("plain")} />
-              <Opt label="Simple Line Design"    active={cfg.matDesign === "simpleLine"}    price={PRICES.table.matDesign.simpleLine}    onClick={() => setMatDesign("simpleLine")} />
-              <Opt label="Premium Border Design" active={cfg.matDesign === "premiumBorder"} price={PRICES.table.matDesign.premiumBorder} onClick={() => setMatDesign("premiumBorder")} />
-              <Opt label="Custom Logo / Design"  active={cfg.matDesign === "custom"}        price={PRICES.table.matDesign.custom}        onClick={() => setMatDesign("custom")} />
-            </div>
-            {cfg.matDesign === "custom" && (
-              <div style={{ marginTop: "0.625rem" }}>
-                <input type="file" accept="image/*,.pdf,.ai,.eps,.svg" onChange={e => setLogoName(e.target.files?.[0]?.name ?? "")} style={{ fontSize: "0.82rem", color: "#888", background: "#111", border: "1px solid #2a2a2a", borderRadius: "6px", padding: "0.5rem", width: "100%" }} />
-                {cfg.uploadedLogoName && <p style={{ fontSize: "0.75rem", color: "#C9A84C", marginTop: "0.375rem" }}>Selected: {cfg.uploadedLogoName}</p>}
+
+            {/* Design mode */}
+            {cfg.feltMode === "design" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <Opt label="Design A" active={cfg.feltDesign === "A"} onClick={() => setFeltDesign("A")} />
+                <Opt label="Design B" active={cfg.feltDesign === "B"} price={PRICES.table.feltDesign.B} onClick={() => setFeltDesign("B")} />
+                <Opt label="Design C" active={cfg.feltDesign === "C"} price={PRICES.table.feltDesign.C} onClick={() => setFeltDesign("C")} />
+                <Opt label="Design D" active={cfg.feltDesign === "D"} price={PRICES.table.feltDesign.D} onClick={() => setFeltDesign("D")} />
+                <Opt label="Custom / Own Design" active={cfg.feltDesign === "custom"} price={PRICES.table.feltDesign.custom} onClick={() => setFeltDesign("custom")} />
+                {cfg.feltDesign === "custom" && (
+                  <div style={{ marginTop: "0.25rem" }}>
+                    <input type="file" accept="image/*,.pdf,.ai,.eps,.svg" onChange={e => setFeltDesignFile(e.target.files?.[0]?.name ?? "")} style={{ fontSize: "0.82rem", color: "#888", background: "#111", border: "1px solid #2a2a2a", borderRadius: "6px", padding: "0.5rem", width: "100%" }} />
+                    {cfg.feltDesignFile && <p style={{ fontSize: "0.75rem", color: "#C9A84C", marginTop: "0.375rem" }}>Selected: {cfg.feltDesignFile}</p>}
+                  </div>
+                )}
               </div>
             )}
           </Section>
@@ -420,12 +441,14 @@ export default function TablesPage() {
             shape={cfg.shape}
             pit={cfg.pit}
             legs={cfg.legs}
+            feltMode={cfg.feltMode}
+            feltColorId={cfg.feltColorId}
             feltHex={feltHex}
+            feltDesign={cfg.feltDesign}
             vinylHex={vinylHex}
             cupHolderCount={cfg.cupHolderCount}
             chipRack={cfg.chipRack}
             lightRail={cfg.accessories.includes("lightRail")}
-            matDesign={cfg.matDesign}
             subLabel={subLabel}
           />
           <p style={{ textAlign: "center", fontSize: "0.8rem", color: "#555", marginTop: "1rem" }}>

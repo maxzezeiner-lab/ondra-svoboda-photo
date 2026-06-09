@@ -67,6 +67,7 @@ export default function Footer() {
               { href: "/about", label: "About Us" },
               { href: "/gallery", label: "Gallery" },
               { href: "/contact", label: "Contact" },
+              { href: "/privacy-policy", label: "Privacy Policy" },
             ].map((l) => (
               <Link
                 key={l.label}
@@ -110,9 +111,9 @@ export default function Footer() {
           <p style={{ fontSize: "0.8rem", color: "#555" }}>
             © 2024 King Shark Poker. All rights reserved.
           </p>
-          <p style={{ fontSize: "0.8rem", color: "#555" }}>
-            Custom casino furniture crafted with excellence.
-          </p>
+          <Link href="/privacy-policy" className="footer-link" style={{ fontSize: "0.8rem", marginBottom: 0 }}>
+            Privacy Policy
+          </Link>
         </div>
       </div>
     </footer>
