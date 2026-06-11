@@ -86,9 +86,14 @@ export function getTableLayers(
   chipRack: boolean,
   cupHolderCount: number,
   lightRail: boolean,
+  dealerCutout: boolean,
 ): Layer[] {
   const b = `/layers/tables/${tableType}/${shape}`;
   const pitIdx = pit ? 1 : 0;
+
+  const baseFile = pit
+    ? (dealerCutout ? "Base%20pit%20dealer%20round.png" : "base-pit.png")
+    : (dealerCutout ? "base%20dealer%20cutout.png"      : "base.png");
 
   const feltLayer: Layer[] = (() => {
     if (feltMode === "color") {
@@ -103,14 +108,16 @@ export function getTableLayers(
       : [];
   })();
 
+  const cupFile = pit ? "Steel%20cups%2010%20pit.png" : "Steel%20cups%2010.png";
+
   return [
-    { kind: "image", slot: "legs",      src: `${b}/legs-${legs}.png`,            duration: 0 },
-    { kind: "image", slot: "base",      src: `${b}/${pit ? "base-pit" : "base"}.png`, duration: 0 },
+    { kind: "image", slot: "legs",      src: `${b}/legs-${legs}.png`, duration: 0    },
+    { kind: "image", slot: "base",      src: `${b}/${baseFile}`,      duration: 1200 },
     ...feltLayer,
     { kind: "tint",  slot: "vinyl",     src: `${b}/vinyl-mask.png`, color: vinylHex },
-    ...(chipRack           ? [{ kind: "image" as const, slot: "chiprack",  src: `${b}/chiprack.png`,  duration: 0 }] : []),
-    ...(cupHolderCount > 0 ? [{ kind: "image" as const, slot: "cupholder", src: `${b}/cupholder.png`, duration: 0 }] : []),
-    ...(lightRail          ? [{ kind: "image" as const, slot: "lightrail", src: `${b}/lightrail.png`, duration: 0 }] : []),
+    ...(cupHolderCount > 0 ? [{ kind: "image" as const, slot: "cupholder", src: `${b}/${cupFile}`,                    duration: 0 }] : []),
+    ...(lightRail           ? [{ kind: "image" as const, slot: "lightrail", src: `${b}/Lights%20pit.png`,              duration: 0 }] : []),
+    ...(chipRack            ? [{ kind: "image" as const, slot: "chiprack",  src: `${b}/Chip%20Tray.png`,               duration: 0 }] : []),
   ];
 }
 

@@ -2,15 +2,14 @@
 
 import { useState } from "react";
 import ProductPreview from "@/components/configurator/ProductPreview";
-import ColorPicker from "@/components/configurator/ColorPicker";
 import PriceSummary from "@/components/configurator/PriceSummary";
 import CustomerInfoForm from "@/components/configurator/CustomerInfoForm";
 import { TableConfig, CustomerInfo } from "@/types";
 import { PRICES } from "@/lib/config";
-import { FELT_COLORS, VINYL_STANDARD, VINYL_PREMIUM } from "@/lib/colors";
+import { FELT_COLORS } from "@/lib/colors";
 
 const DEFAULT_CONFIG: TableConfig = {
-  type: null,
+  type: "poker",
   size: "standard",
   shape: "oval",
   pit: false,
@@ -24,29 +23,26 @@ const DEFAULT_CONFIG: TableConfig = {
   vinylType: "standard",
   vinylColorId: "black",
   vinylCustomHex: "",
+  dealerCutout: false,
   chipRack: false,
   cupHolderCount: 0,
   cupHolderMaterial: "mosas",
   cupHolderSize: "small",
-  dealerMaterial: "nothing",
+  dealerMaterial: "cushioned",
   feetColor: "black",
   feetCustomHex: "",
   accessories: [],
 };
 
-const FEETCOLOR_OPTIONS = [
-  { id: "black",  name: "Black",  hex: "#0a0a0a" },
-  { id: "gold",   name: "Gold",   hex: "#d4af37" },
-  { id: "brass",  name: "Brass",  hex: "#b5a642" },
-  { id: "chrome", name: "Chrome", hex: "#d4d4d4" },
-];
 
 const TABLE_TYPES = [
-  { value: "poker"     as const, label: "Poker Table",     desc: "6–10 players. Oval, bean, or round. Full customisation.", color: "#1a6b3c", base: PRICES.table.base.poker     },
-  { value: "blackjack" as const, label: "Blackjack Table", desc: "Professional casino layout. Drop box, bill slot, premium options.", color: "#1a3a8f", base: PRICES.table.base.blackjack },
-  { value: "roulette"  as const, label: "Roulette Table",  desc: "Full roulette setup with wheel housing and brass fixtures.", color: "#722f37", base: PRICES.table.base.roulette  },
-  { value: "custom"    as const, label: "Custom Table",    desc: "Any shape, size, or concept. Bring us your vision.", color: "#5b2d8e", base: PRICES.table.base.custom    },
+  { value: "poker"     as const, label: "Poker Table",     desc: "6–10 players. Oval, bean, or round. Full customisation.", color: "#1a6b3c", base: PRICES.table.base.poker,     hidden: false },
+  { value: "blackjack" as const, label: "Blackjack Table", desc: "Professional casino layout. Drop box, bill slot, premium options.", color: "#1a3a8f", base: PRICES.table.base.blackjack, hidden: true  },
+  { value: "roulette"  as const, label: "Roulette Table",  desc: "Full roulette setup with wheel housing and brass fixtures.", color: "#722f37", base: PRICES.table.base.roulette,  hidden: true  },
+  { value: "custom"    as const, label: "Custom Table",    desc: "Any shape, size, or concept. Bring us your vision.", color: "#5b2d8e", base: PRICES.table.base.custom,    hidden: true  },
 ];
+
+const VISIBLE_TABLE_TYPES = TABLE_TYPES.filter(t => !t.hidden);
 
 function calcPrice(cfg: TableConfig): number {
   if (!cfg.type) return 0;
@@ -61,7 +57,7 @@ function calcPrice(cfg: TableConfig): number {
   } else {
     t += P.feltDesign[cfg.feltDesign];
   }
-  t += cfg.vinylType === "custom" ? P.vinyl.customHex : cfg.vinylType === "premium" ? P.vinyl.premium : 0;
+  if (cfg.vinylType === "custom") t += P.vinyl.customHex;
   if (cfg.chipRack) t += P.chipRack.yes;
   if (cfg.cupHolderCount > 0) {
     t += cfg.cupHolderCount * P.cupHolder.perCup;
@@ -70,8 +66,6 @@ function calcPrice(cfg: TableConfig): number {
   }
   t += P.dealerMaterial[cfg.dealerMaterial];
   if (cfg.accessories.includes("lightRail")) t += P.accessories.lightRail;
-  if (cfg.accessories.includes("dropBox"))   t += P.accessories.dropBox;
-  if (cfg.accessories.includes("billSlot"))  t += P.accessories.billSlot;
   return t;
 }
 
@@ -82,7 +76,6 @@ function buildRows(cfg: TableConfig) {
   rows.push({ label: `Base — ${cfg.type.charAt(0).toUpperCase() + cfg.type.slice(1)} Table`, value: P.base[cfg.type], prefix: "" });
   if (cfg.size === "large")   rows.push({ label: "Size: Large",   value: P.size.large });
   if (cfg.shape === "bean")   rows.push({ label: "Shape: Bean",   value: P.shape.bean });
-  if (cfg.shape === "round")  rows.push({ label: "Shape: Round",  value: P.shape.round });
   if (cfg.pit)                rows.push({ label: "Raised Armrest Pit", value: P.pit.yes });
   if (cfg.legs !== "A")       rows.push({ label: `Leg Set: Variant ${cfg.legs}`, value: P.legs[cfg.legs] });
   if (cfg.feltMode === "color" && cfg.feltColorId === "custom")
@@ -91,8 +84,7 @@ function buildRows(cfg: TableConfig) {
     const dp = P.feltDesign[cfg.feltDesign];
     if (dp > 0) rows.push({ label: `Felt Design ${cfg.feltDesign}`, value: dp });
   }
-  if (cfg.vinylType === "custom")  rows.push({ label: "Vinyl: Custom HEX", value: P.vinyl.customHex });
-  else if (cfg.vinylType === "premium") rows.push({ label: "Vinyl: Premium", value: P.vinyl.premium });
+  if (cfg.vinylType === "custom") rows.push({ label: "Vinyl: Custom", value: P.vinyl.customHex });
   if (cfg.chipRack) rows.push({ label: "Chip Rack", value: P.chipRack.yes });
   if (cfg.cupHolderCount > 0) {
     let cup = cfg.cupHolderCount * P.cupHolder.perCup;
@@ -102,8 +94,6 @@ function buildRows(cfg: TableConfig) {
   }
   if (cfg.dealerMaterial === "metal") rows.push({ label: "Dealer Position: Metal", value: P.dealerMaterial.metal });
   if (cfg.accessories.includes("lightRail")) rows.push({ label: "Light Rail", value: P.accessories.lightRail });
-  if (cfg.accessories.includes("dropBox"))   rows.push({ label: "Drop Box",   value: P.accessories.dropBox });
-  if (cfg.accessories.includes("billSlot"))  rows.push({ label: "Bill Slot",  value: P.accessories.billSlot });
   return rows;
 }
 
@@ -160,7 +150,8 @@ export default function TablesPage() {
   const setType          = (v: TableConfig["type"])           => setCfg(p => ({ ...p, type: v }));
   const setSize          = (v: TableConfig["size"])           => setCfg(p => ({ ...p, size: v }));
   const setShape         = (v: TableConfig["shape"])          => setCfg(p => ({ ...p, shape: v }));
-  const setPit           = (v: boolean)                       => setCfg(p => ({ ...p, pit: v }));
+  const setPit           = (v: boolean)                       => setCfg(p => ({ ...p, pit: v, accessories: v ? p.accessories : p.accessories.filter(a => a !== "lightRail") }));
+  const setDealerCutout  = (v: boolean)                       => setCfg(p => ({ ...p, dealerCutout: v }));
   const setLegs          = (v: TableConfig["legs"])           => setCfg(p => ({ ...p, legs: v }));
   const setFeltMode      = (v: TableConfig["feltMode"])    => setCfg(p => ({ ...p, feltMode: v }));
   const setFeltColor     = (v: string)                     => setCfg(p => ({ ...p, feltColorId: v }));
@@ -202,7 +193,7 @@ export default function TablesPage() {
           <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>✓</div>
           <h2 style={{ fontFamily: "var(--font-playfair,Georgia,serif)", fontSize: "2rem", color: "#C9A84C", marginBottom: "1rem" }}>Configuration Submitted!</h2>
           <p style={{ color: "#888", lineHeight: 1.7, marginBottom: "2rem" }}>Thank you. We have received your table configuration and will contact you within 1–2 business days.</p>
-          <button className="btn-gold" onClick={() => { setSuccess(false); setCfg(DEFAULT_CONFIG); }}>Configure Another Table</button>
+          <button className="btn-gold" onClick={() => { setSuccess(false); setCfg(DEFAULT_CONFIG); }}>Configure Another Poker Table</button>
         </div>
       </div>
     );
@@ -226,7 +217,7 @@ export default function TablesPage() {
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.5rem" }}>
-          {TABLE_TYPES.map(t => (
+          {VISIBLE_TABLE_TYPES.map(t => (
             <button
               key={t.value}
               type="button"
@@ -260,10 +251,7 @@ export default function TablesPage() {
     ? cfg.feltCustomHex || "#0a0a0a"
     : FELT_COLORS.find(c => c.id === cfg.feltColorId)?.hex ?? "#0a0a0a";
 
-  const vinylHex = cfg.vinylType === "custom"
-    ? cfg.vinylCustomHex || "#0a0a0a"
-    : (cfg.vinylType === "premium" ? VINYL_PREMIUM : VINYL_STANDARD)
-        .find(c => c.id === cfg.vinylColorId)?.hex ?? "#0a0a0a";
+  const vinylHex = cfg.vinylType === "custom" ? (cfg.vinylCustomHex || "#C9A84C") : "#0a0a0a";
 
   return (
     <>
@@ -285,11 +273,15 @@ export default function TablesPage() {
         {/* LEFT — Controls */}
         <div style={{ background: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: "12px", padding: "1.5rem", position: "sticky", top: "88px", maxHeight: "calc(100vh - 108px)", overflowY: "auto" }}>
 
-          {/* Back button */}
-          <button type="button" onClick={() => setType(null)} style={{ display: "flex", alignItems: "center", gap: "0.4rem", background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.82rem", marginBottom: "0.875rem", padding: 0 }}>
-            ← Change table type
-          </button>
-          <div style={{ height: "1px", background: "#2a2a2a", marginBottom: "0.5rem" }} />
+          {/* Back button — only shown when multiple table types are available */}
+          {VISIBLE_TABLE_TYPES.length > 1 && (
+            <>
+              <button type="button" onClick={() => setType(null)} style={{ display: "flex", alignItems: "center", gap: "0.4rem", background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.82rem", marginBottom: "0.875rem", padding: 0 }}>
+                ← Change table type
+              </button>
+              <div style={{ height: "1px", background: "#2a2a2a", marginBottom: "0.5rem" }} />
+            </>
+          )}
 
           <Section title="Size">
             <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
@@ -301,14 +293,17 @@ export default function TablesPage() {
 
           <Section title="Shape">
             <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-              <Opt label="Oval"  active={cfg.shape === "oval"}  onClick={() => setShape("oval")}  />
-              <Opt label="Bean"  active={cfg.shape === "bean"}  price={PRICES.table.shape.bean}  onClick={() => setShape("bean")}  />
-              <Opt label="Round" active={cfg.shape === "round"} price={PRICES.table.shape.round} onClick={() => setShape("round")} />
+              <Opt label="Oval" active={cfg.shape === "oval"} onClick={() => setShape("oval")} />
+              <Opt label="Bean" active={cfg.shape === "bean"} price={PRICES.table.shape.bean} onClick={() => setShape("bean")} />
             </div>
           </Section>
 
           <Section title="Raised Armrest Pit">
             <YesNo active={cfg.pit} yesPrice={PRICES.table.pit.yes} onYes={() => setPit(true)} onNo={() => setPit(false)} />
+          </Section>
+
+          <Section title="Dealer Cutout">
+            <YesNo active={cfg.dealerCutout} onYes={() => setDealerCutout(true)} onNo={() => setDealerCutout(false)} />
           </Section>
 
           <Section title="Leg Set">
@@ -365,15 +360,11 @@ export default function TablesPage() {
           </Section>
 
           <Section title="Vinyl / Outside">
-            <SubLabel>Vinyl Type</SubLabel>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", marginBottom: "0.625rem" }}>
-              <Opt label="Standard"   active={cfg.vinylType === "standard"} onClick={() => setVinylType("standard")} />
-              <Opt label="Premium"    active={cfg.vinylType === "premium"}  price={PRICES.table.vinyl.premium}    onClick={() => setVinylType("premium")} />
-              <Opt label="Custom HEX" active={cfg.vinylType === "custom"}   price={PRICES.table.vinyl.customHex}  onClick={() => setVinylType("custom")} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", marginBottom: "0.5rem" }}>
+              <Opt label="Standard" active={cfg.vinylType === "standard"} onClick={() => setVinylType("standard")} />
+              <Opt label="Custom"   active={cfg.vinylType === "custom"}   onClick={() => setVinylType("custom")} />
             </div>
-            {cfg.vinylType === "standard" && <ColorPicker label="" colors={VINYL_STANDARD} selected={cfg.vinylColorId} onChange={setVinylColor} />}
-            {cfg.vinylType === "premium"  && <ColorPicker label="" colors={VINYL_PREMIUM}  selected={cfg.vinylColorId} onChange={setVinylColor} />}
-            {cfg.vinylType === "custom"   && (
+            {cfg.vinylType === "custom" && (
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                 <input type="color" value={cfg.vinylCustomHex || "#C9A84C"} onChange={e => setVinylHex(e.target.value)} style={{ width: "40px", height: "32px", borderRadius: "4px", border: "1px solid #2a2a2a", cursor: "pointer", background: "none", padding: "2px" }} />
                 <input type="text" className="input-dark" placeholder="#C9A84C" value={cfg.vinylCustomHex} onChange={e => setVinylHex(e.target.value)} style={{ maxWidth: "140px" }} />
@@ -402,8 +393,8 @@ export default function TablesPage() {
                   </div>
                   <SubLabel>Cup Size</SubLabel>
                   <div style={{ display: "flex", gap: "0.4rem" }}>
-                    <Opt label="Small" active={cfg.cupHolderSize === "small"} onClick={() => setCupSize("small")} />
-                    <Opt label="Big"   active={cfg.cupHolderSize === "big"}   price={PRICES.table.cupHolder.sizeBig} onClick={() => setCupSize("big")} />
+                    <Opt label="Small (ø 68 mm)" active={cfg.cupHolderSize === "small"} onClick={() => setCupSize("small")} />
+                    <Opt label="Big (ø 89 mm)"   active={cfg.cupHolderSize === "big"}   price={PRICES.table.cupHolder.sizeBig} onClick={() => setCupSize("big")} />
                   </div>
                 </>
               )}
@@ -411,25 +402,34 @@ export default function TablesPage() {
 
             <SubLabel>Dealer Position Material</SubLabel>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", marginBottom: "0.625rem" }}>
-              <Opt label="None"                     active={cfg.dealerMaterial === "nothing"}   onClick={() => setDealerMat("nothing")} />
               <Opt label="Cushioned (matches table)" active={cfg.dealerMaterial === "cushioned"} onClick={() => setDealerMat("cushioned")} />
-              <Opt label="Metal"                    active={cfg.dealerMaterial === "metal"}     price={PRICES.table.dealerMaterial.metal} onClick={() => setDealerMat("metal")} />
+              <Opt label="Metal"                     active={cfg.dealerMaterial === "metal"}     price={PRICES.table.dealerMaterial.metal} onClick={() => setDealerMat("metal")} />
             </div>
 
             <SubLabel>Feet / Leg Colour</SubLabel>
-            <ColorPicker label="" colors={FEETCOLOR_OPTIONS} selected={cfg.feetColor} onChange={v => setFeetColor(v as TableConfig["feetColor"])} showCustomHex customHex={cfg.feetCustomHex} onCustomHexChange={setFeetHex} customHexLabel="Custom colour" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", marginBottom: "0.5rem" }}>
+              <Opt label="Standard" active={cfg.feetColor === "black"}  onClick={() => setFeetColor("black")}  />
+              <Opt label="Custom"   active={cfg.feetColor === "custom"} onClick={() => setFeetColor("custom")} />
+            </div>
+            {cfg.feetColor === "custom" && (
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <input type="color" value={cfg.feetCustomHex || "#0a0a0a"} onChange={e => setFeetHex(e.target.value)} style={{ width: "40px", height: "32px", borderRadius: "4px", border: "1px solid #2a2a2a", cursor: "pointer", background: "none", padding: "2px" }} />
+                <input type="text" className="input-dark" placeholder="#0a0a0a" value={cfg.feetCustomHex} onChange={e => setFeetHex(e.target.value)} style={{ maxWidth: "140px" }} />
+              </div>
+            )}
 
             <SubLabel>Extra Accessories</SubLabel>
             {[
-              { id: "lightRail", label: "Light Rail", price: PRICES.table.accessories.lightRail },
-              { id: "dropBox",   label: "Drop Box",   price: PRICES.table.accessories.dropBox },
-              { id: "billSlot",  label: "Bill Slot",  price: PRICES.table.accessories.billSlot },
-            ].map(acc => (
-              <label key={acc.id} style={{ display: "flex", alignItems: "center", gap: "0.625rem", fontSize: "0.85rem", color: "#aaa", cursor: "pointer", marginBottom: "0.5rem" }}>
-                <input type="checkbox" checked={cfg.accessories.includes(acc.id)} onChange={() => toggleAcc(acc.id)} style={{ accentColor: "#C9A84C", width: "16px", height: "16px" }} />
-                {acc.label} (+{acc.price}€)
-              </label>
-            ))}
+              { id: "lightRail", label: "Light Rail (LED, custom light)", price: PRICES.table.accessories.lightRail, requiresPit: true },
+            ].map(acc => {
+              const disabled = !!(acc as { requiresPit?: boolean }).requiresPit && !cfg.pit;
+              return (
+                <label key={acc.id} style={{ display: "flex", alignItems: "center", gap: "0.625rem", fontSize: "0.85rem", color: disabled ? "#444" : "#aaa", cursor: disabled ? "not-allowed" : "pointer", marginBottom: "0.5rem" }}>
+                  <input type="checkbox" disabled={disabled} checked={cfg.accessories.includes(acc.id)} onChange={() => toggleAcc(acc.id)} style={{ accentColor: "#C9A84C", width: "16px", height: "16px", cursor: disabled ? "not-allowed" : "pointer" }} />
+                  {acc.label} (+{acc.price}€){disabled && <span style={{ fontSize: "0.72rem", color: "#555" }}> — requires raised armrest</span>}
+                </label>
+              );
+            })}
           </Section>
         </div>
 
@@ -449,6 +449,7 @@ export default function TablesPage() {
             cupHolderCount={cfg.cupHolderCount}
             chipRack={cfg.chipRack}
             lightRail={cfg.accessories.includes("lightRail")}
+            dealerCutout={cfg.dealerCutout}
             subLabel={subLabel}
           />
           <p style={{ textAlign: "center", fontSize: "0.8rem", color: "#555", marginTop: "1rem" }}>

@@ -20,6 +20,7 @@ interface ProductPreviewProps {
   cupHolderCount?: number;
   chipRack?: boolean;
   lightRail?: boolean;
+  dealerCutout?: boolean;
 
   // Chair
   chairType?: string;
@@ -114,6 +115,7 @@ export default function ProductPreview({
   cupHolderCount = 0,
   chipRack = false,
   lightRail = false,
+  dealerCutout = false,
   chairType,
   chairHex = "#0a0a0a",
   armrests = false,
@@ -123,7 +125,7 @@ export default function ProductPreview({
 
   let layers: Layer[] = [];
   if (category === "table" && tableType) {
-    layers = getTableLayers(tableType, shape, pit, legs, feltMode, feltColorId, feltHex, feltDesign, vinylHex, chipRack, cupHolderCount, lightRail);
+    layers = getTableLayers(tableType, shape, pit, legs, feltMode, feltColorId, feltHex, feltDesign, vinylHex, chipRack, cupHolderCount, lightRail, dealerCutout);
   } else if (category === "chair" && chairType) {
     layers = getChairLayers(chairType, chairHex, armrests);
   } else if (category === "chips" && chipMaterial) {

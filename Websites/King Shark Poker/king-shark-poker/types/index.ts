@@ -17,6 +17,7 @@ export interface TableConfig {
   cupHolderCount: number;
   cupHolderMaterial: "mosas" | "brass";
   cupHolderSize: "small" | "big";
+  dealerCutout: boolean;
   dealerMaterial: "metal" | "cushioned" | "nothing";
   feetColor: "black" | "gold" | "brass" | "chrome" | "custom";
   feetCustomHex: string;
